@@ -25,12 +25,14 @@ class ShowNotificationWorker(
         val allBoots = repository.getAllBoots().first()
         val dataType = BootsToBootSavedDataTypeMapper().invoke(allBoots)
         appNotificationManager.showBootNotification(dataType)
-        WorkManager.getInstance(applicationContext).enqueue(buildShowNotificationRequest())
+        val workManager = WorkManager.getInstance(applicationContext)
+        workManager.cancelAllWorkByTag(TAG)
+        workManager.enqueue(buildShowNotificationRequest())
         return Result.success()
     }
 
     companion object {
-        const val TAG = "ShowNotificationWorker"
+        private const val TAG = "ShowNotificationWorker"
 
         fun buildShowNotificationRequest(delay: Long = 15) =
             OneTimeWorkRequestBuilder<ShowNotificationWorker>().setInitialDelay(

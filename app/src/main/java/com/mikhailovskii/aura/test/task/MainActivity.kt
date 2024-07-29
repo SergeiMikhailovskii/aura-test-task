@@ -82,7 +82,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun launchNotificationsTask() {
         val workManager = WorkManager.getInstance(applicationContext)
-        workManager.cancelAllWorkByTag(ShowNotificationWorker.TAG)
         workManager.enqueue(ShowNotificationWorker.buildShowNotificationRequest(0))
     }
 }
