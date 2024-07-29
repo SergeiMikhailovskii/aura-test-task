@@ -1,5 +1,5 @@
 CREATE TABLE bootData (
-    id INTEGER PRIMARY KEY NOT NULL,
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     bootTime INTEGER NOT NULL
 );
 
@@ -7,5 +7,5 @@ selectAll:
 SELECT * FROM bootData;
 
 insertBootData:
-INSERT INTO bootData(id, bootTime)
-VALUES (?, ?);
+INSERT INTO bootData(bootTime)
+VALUES (?);

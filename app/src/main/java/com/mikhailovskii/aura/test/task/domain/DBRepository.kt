@@ -5,4 +5,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface DBRepository {
     fun getAllBoots(): Flow<List<BootData>>
+    fun insertBoot(time: Long)
 }

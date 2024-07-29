@@ -10,6 +10,10 @@ class DefaultDBRepository(
     private val database: AuraTestTaskDB,
     private val ioDispatcher: CoroutineDispatcher
 ) : DBRepository {
+
     override fun getAllBoots() = database.bootDataQueries.selectAll().asFlow().mapToList(ioDispatcher)
 
+    override fun insertBoot(time: Long) {
+        database.bootDataQueries.insertBootData(time)
+    }
 }
