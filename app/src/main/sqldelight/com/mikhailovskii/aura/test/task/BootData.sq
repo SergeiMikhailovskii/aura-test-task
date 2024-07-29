@@ -1,0 +1,11 @@
+CREATE TABLE bootData (
+    id INTEGER PRIMARY KEY NOT NULL,
+    bootTime INTEGER NOT NULL
+);
+
+selectAll:
+SELECT * FROM bootData;
+
+insertBootData:
+INSERT INTO bootData(id, bootTime)
+VALUES (?, ?);
