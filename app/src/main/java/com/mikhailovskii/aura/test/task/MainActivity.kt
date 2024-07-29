@@ -26,9 +26,7 @@ class MainActivity : AppCompatActivity() {
 
     private val notificationsPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-            if (isGranted) {
-                showNotificationAtStart()
-            } else {
+            if (!isGranted) {
                 Log.d("MainActivity", "Permission not granted")
             }
         }
@@ -57,17 +55,16 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+        lifecycleScope.launch {
+            viewModel.notificationsFlow.collectLatest { state ->
+                appNotificationManager.showBootNotification(state)
+            }
+        }
     }
 
     private fun requestNotificationsPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             notificationsPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-        } else {
-            showNotificationAtStart()
         }
-    }
-
-    private fun showNotificationAtStart() {
-        appNotificationManager.showNotification()
     }
 }

@@ -6,10 +6,11 @@ import android.content.Context
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.content.getSystemService
+import com.mikhailovskii.aura.test.task.domain.BootSavedDataType
 
 interface AppNotificationManager {
     fun createChannels()
-    fun showNotification()
+    fun showBootNotification(dataType: BootSavedDataType)
 }
 
 internal class DefaultAppNotificationManager(
@@ -27,11 +28,17 @@ internal class DefaultAppNotificationManager(
         }
     }
 
-    override fun showNotification() {
+    override fun showBootNotification(dataType: BootSavedDataType) {
+        val contentText = when (dataType) {
+            BootSavedDataType.None -> "No boots detected"
+            is BootSavedDataType.Single -> "The boot was detected = ${dataType.time}"
+            is BootSavedDataType.Multiple -> "Last boots time delta = ${dataType.delta}"
+        }
+
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setContentTitle("test title")
-            .setContentText("test content")
+            .setContentTitle("Boot notification")
+            .setContentText(contentText)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .build()
         notificationManager.notify(12345, notification)
