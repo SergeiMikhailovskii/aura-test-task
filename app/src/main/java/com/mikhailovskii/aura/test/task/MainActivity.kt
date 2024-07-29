@@ -22,7 +22,6 @@ import org.koin.android.ext.android.inject
 class MainActivity : AppCompatActivity() {
 
     private val viewModel: MainViewModel by inject()
-    private val appNotificationManager: AppNotificationManager by inject()
 
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
