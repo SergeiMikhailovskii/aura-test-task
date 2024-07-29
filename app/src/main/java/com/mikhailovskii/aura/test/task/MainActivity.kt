@@ -1,7 +1,11 @@
 package com.mikhailovskii.aura.test.task
 
+import android.Manifest
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -16,7 +20,18 @@ import org.koin.android.ext.android.inject
 class MainActivity : AppCompatActivity() {
 
     private val viewModel: MainViewModel by inject()
+    private val appNotificationManager: AppNotificationManager by inject()
+
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
+
+    private val notificationsPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                showNotificationAtStart()
+            } else {
+                Log.d("MainActivity", "Permission not granted")
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,14 +43,31 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
+        startScreenStateListening()
+        requestNotificationsPermission()
+    }
+
+    private fun startScreenStateListening() {
         lifecycleScope.launch {
             viewModel.uiState.collectLatest { state ->
                 if (state == MainState.Empty) {
-                    binding.tvBootInfo.text = "Empty list"
+                    binding.tvBootInfo.text = getString(R.string.no_boots_detected)
                 } else {
                     binding.tvBootInfo.text = "Not empty list"
                 }
             }
         }
+    }
+
+    private fun requestNotificationsPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            notificationsPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        } else {
+            showNotificationAtStart()
+        }
+    }
+
+    private fun showNotificationAtStart() {
+        appNotificationManager.showNotification()
     }
 }
