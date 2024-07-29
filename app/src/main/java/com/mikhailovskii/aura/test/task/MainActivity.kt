@@ -67,8 +67,8 @@ class MainActivity : AppCompatActivity() {
             viewModel.uiState.collectLatest { state ->
                 if (state == MainState.Empty) {
                     binding.tvBootInfo.text = getString(R.string.no_boots_detected)
-                } else {
-                    binding.tvBootInfo.text = "Not empty list"
+                } else if (state is MainState.WithBootInfo) {
+                    binding.tvBootInfo.text = state.mappedBoots
                 }
             }
         }

@@ -10,6 +10,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.text.DateFormat
+import java.util.Date
 
 internal class MainViewModel(private val repository: DataRepository) : ViewModel() {
 
@@ -30,7 +32,11 @@ internal class MainViewModel(private val repository: DataRepository) : ViewModel
 
     private fun resolveScreenState(boots: List<BootData>) {
         if (boots.isNotEmpty()) {
-            _uiState.value = MainState.WithBootInfo()
+            val dateTime = DateFormat.getDateInstance(DateFormat.SHORT)
+            val mappedBoots = boots.map { dateTime.format(Date(it.bootTime)) }.groupBy { it }
+                .map { BootUIData(it.key, it.value.size) }
+                .joinToString(separator = "\n") { "${it.date}-${it.amount}" }
+            _uiState.value = MainState.WithBootInfo(mappedBoots)
         } else {
             _uiState.value = MainState.Empty
         }
