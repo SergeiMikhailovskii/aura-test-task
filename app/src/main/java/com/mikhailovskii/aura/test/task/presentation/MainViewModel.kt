@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mikhailovskii.aura.test.task.BootData
 import com.mikhailovskii.aura.test.task.domain.DataRepository
+import com.mikhailovskii.aura.test.task.domain.DismissedNotificationConfig
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -33,5 +34,9 @@ internal class MainViewModel(private val repository: DataRepository) : ViewModel
         } else {
             _uiState.value = MainState.Empty
         }
+    }
+
+    fun saveDismissedNotificationConfig(config: DismissedNotificationConfig) {
+        viewModelScope.launch(exceptionHandler) { repository.saveDismissedNotificationConfig(config) }
     }
 }

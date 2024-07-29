@@ -7,7 +7,7 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.mikhailovskii.aura.test.task.AppNotificationManager
 import com.mikhailovskii.aura.test.task.domain.BootsToBootSavedDataTypeMapper
-import com.mikhailovskii.aura.test.task.domain.DBRepository
+import com.mikhailovskii.aura.test.task.domain.DataRepository
 import kotlinx.coroutines.flow.first
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -19,7 +19,7 @@ class ShowNotificationWorker(
 ) : CoroutineWorker(appContext, params), KoinComponent {
 
     private val appNotificationManager: AppNotificationManager by inject()
-    private val repository: DBRepository by inject()
+    private val repository: DataRepository by inject()
 
     override suspend fun doWork(): Result {
         val allBoots = repository.getAllBoots().first()
@@ -32,9 +32,9 @@ class ShowNotificationWorker(
     companion object {
         const val TAG = "ShowNotificationWorker"
 
-        fun buildShowNotificationRequest(isInitial: Boolean = false) =
+        fun buildShowNotificationRequest(delay: Long = 15) =
             OneTimeWorkRequestBuilder<ShowNotificationWorker>().setInitialDelay(
-                if (isInitial) 0 else 15,
+                delay,
                 TimeUnit.MINUTES
             ).build()
     }

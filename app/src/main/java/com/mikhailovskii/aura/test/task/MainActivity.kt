@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.work.WorkManager
 import com.mikhailovskii.aura.test.task.data.worker.ShowNotificationWorker
 import com.mikhailovskii.aura.test.task.databinding.ActivityMainBinding
+import com.mikhailovskii.aura.test.task.domain.DismissedNotificationConfig
 import com.mikhailovskii.aura.test.task.presentation.MainState
 import com.mikhailovskii.aura.test.task.presentation.MainViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -45,6 +46,20 @@ class MainActivity : AppCompatActivity() {
         startScreenStateListening()
         requestNotificationsPermission()
         launchNotificationsTask()
+        initUI()
+    }
+
+    private fun initUI() {
+        binding.btnSave.setOnClickListener {
+            val attempts = binding.etTotalDismissals.text.toString().toInt()
+            val duration = binding.etIntervalDismissals.text.toString().toInt()
+            viewModel.saveDismissedNotificationConfig(
+                DismissedNotificationConfig(
+                    duration,
+                    attempts
+                )
+            )
+        }
     }
 
     private fun startScreenStateListening() {
@@ -68,6 +83,6 @@ class MainActivity : AppCompatActivity() {
     private fun launchNotificationsTask() {
         val workManager = WorkManager.getInstance(applicationContext)
         workManager.cancelAllWorkByTag(ShowNotificationWorker.TAG)
-        workManager.enqueue(ShowNotificationWorker.buildShowNotificationRequest(true))
+        workManager.enqueue(ShowNotificationWorker.buildShowNotificationRequest(0))
     }
 }
