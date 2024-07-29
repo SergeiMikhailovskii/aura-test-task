@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.work.WorkManager
+import com.mikhailovskii.aura.test.task.data.worker.ShowNotificationWorker
 import com.mikhailovskii.aura.test.task.databinding.ActivityMainBinding
 import com.mikhailovskii.aura.test.task.presentation.MainState
 import com.mikhailovskii.aura.test.task.presentation.MainViewModel
@@ -43,6 +45,7 @@ class MainActivity : AppCompatActivity() {
 
         startScreenStateListening()
         requestNotificationsPermission()
+        launchNotificationsTask()
     }
 
     private fun startScreenStateListening() {
@@ -66,5 +69,11 @@ class MainActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             notificationsPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
+    }
+
+    private fun launchNotificationsTask() {
+        val workManager = WorkManager.getInstance(applicationContext)
+        workManager.cancelAllWorkByTag(ShowNotificationWorker.TAG)
+        workManager.enqueue(ShowNotificationWorker.buildShowNotificationRequest())
     }
 }
