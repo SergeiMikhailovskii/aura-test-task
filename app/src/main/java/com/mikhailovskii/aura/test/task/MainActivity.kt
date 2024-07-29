@@ -58,11 +58,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        lifecycleScope.launch {
-            viewModel.notificationsFlow.collectLatest { state ->
-                appNotificationManager.showBootNotification(state)
-            }
-        }
     }
 
     private fun requestNotificationsPermission() {
@@ -74,6 +69,6 @@ class MainActivity : AppCompatActivity() {
     private fun launchNotificationsTask() {
         val workManager = WorkManager.getInstance(applicationContext)
         workManager.cancelAllWorkByTag(ShowNotificationWorker.TAG)
-        workManager.enqueue(ShowNotificationWorker.buildShowNotificationRequest())
+        workManager.enqueue(ShowNotificationWorker.buildShowNotificationRequest(true))
     }
 }
